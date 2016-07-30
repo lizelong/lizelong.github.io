@@ -16,7 +16,7 @@ del, dfn, em, img, ins, kbd, q, s, samp,
 small, strike, strong, sub, sup, tt, var,
 b, u, i, center,
 dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
+fieldset, label, legend,
 table, caption, tbody, tfoot, thead, tr, th, td,
 article, aside, canvas, details, embed,
 figure, figcaption, footer, header, hgroup,
@@ -251,10 +251,6 @@ td {
   border: 1px solid #373737;
  }
 
-form {
-  background: #f2f2f2;
-  padding: 20px;
-}
 
 /*******************************************************************************
 Full-Width Styles
@@ -360,7 +356,7 @@ Full-Width Styles
   border-bottom: 1px solid #111;
 }
 
-#main_content {
+.main_content {
   padding-top: 40px;
 }
 
