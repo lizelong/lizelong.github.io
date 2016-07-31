@@ -19,8 +19,9 @@ function page(p, num){
     $.get('./title.html', '', function(res){
       data = res;
       total = Math.ceil(res.length / num);  //总页码数
+      var end = Math.min(num, res.length);
       var str = '';
-      for (var i = 0; i < num; i++) {
+      for (var i = 0; i < end; i++) {
         str += '<section class="inner main_content"><h3><a class="title" href="./post/'+ res[i]['id'] +'.html">'+ res[i]['title'] +'</a><span class="pull-right">'+ res[i]['time'] +'</span></h3><p>'+ res[i]['des'] +'</p></section>';
       }
 
