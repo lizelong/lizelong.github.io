@@ -82,6 +82,8 @@ $.ajax({
   success: function(res){
     $('#main_content_wrap').html(res);
     $('#main_content_wrap .main_content').prepend('<a href="index.html" class="btn btn-info">返回列表</a>');
+    //获取标题
+    getTitle();
   },
   error: function(){
     $('#main_content_wrap').html('<section class="inner main_content" style="font-size:25px"><i class="glyphicon glyphicon-share-alt"></i> <a href="index.html">暂时没有内容</a></section>');
@@ -89,11 +91,9 @@ $.ajax({
 })
 
 //获取标题信息
-var data;
-if (data === undefined) {
+function getTitle() {
   //ajax请求
   $.get('./title.html', '', function(res){
-    data = res;
     var str = '<section class="inner main_content"> <ul class="pager">';
     for (var i = 0; i < res.length; i++) {
       if (res[i]['id'] == $_GET['id']) {
