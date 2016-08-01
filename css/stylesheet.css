@@ -6,6 +6,25 @@ by Jason Costello, @jsncostello
 @import url(github-light.css);
 
 /*******************************************************************************
+自定义css
+*******************************************************************************/
+.position-btn {
+  width:50px;
+  height:50px;
+  line-height:50px;
+  background:#333;
+  cursor:pointer;
+  position:fixed;
+  right:0px;
+  top:50%;
+  margin-top:-25px;
+  display:none;
+}
+.position-btn:hover{
+  background:#444;
+}
+
+/*******************************************************************************
 MeyerWeb Reset
 *******************************************************************************/
 
@@ -291,8 +310,8 @@ Full-Width Styles
   background: linear-gradient(top, #373737, #212121);
 }
 
-#header_wrap .inner {
-  padding: 50px 10px 30px 10px;
+#header_wrap .head {
+  margin:30px;
 }
 
 #project_title {
@@ -354,7 +373,8 @@ Full-Width Styles
   background: #f2f2f2;
   border-top: 1px solid #111;
   border-bottom: 1px solid #111;
-  min-height:280px;
+  min-height:600px;
+  padding:80px 0 300px 0;
 }
 
 .main_content {

@@ -7,11 +7,11 @@ page(p);          //默认加载第一页数据
 /**
  * 请求title.html的数据
  * @param  {int} p   当前页，默认刷新就加载第一页的数据
- * @param  {int} num 每页显示几条数据，默认显示10条
+ * @param  {int} num 每页显示几条数据，默认显示5条
  */
 function page(p, num){
   //设置默认显示10条
-  if (num === undefined) num = 10;
+  if (num === undefined) num = 5;
 
   //判断data是否有值
   if (data === undefined) {
@@ -22,7 +22,7 @@ function page(p, num){
       var end = Math.min(num, res.length);
       var str = '';
       for (var i = 0; i < end; i++) {
-        str += '<section class="inner main_content"><h3><a class="title" href="./post/'+ res[i]['id'] +'.html">'+ res[i]['title'] +'</a><span class="pull-right">'+ res[i]['time'] +'</span></h3><p>'+ res[i]['des'] +'</p></section>';
+        str += '<section class="inner main_content"><h3><a class="title" href="post.html?id='+ res[i]['id'] +'">'+ res[i]['title'] +'</a><span class="pull-right">'+ res[i]['time'] +'</span></h3><p>'+ res[i]['des'] +'</p></section>';
       }
 
       $('#main_content_wrap').append(str);
@@ -32,7 +32,7 @@ function page(p, num){
     var end = Math.min((start + num), data.length);
     var str = '';
     for (var i = start; i < end; i++) {
-      str += '<section class="inner main_content"><h3><a class="title" href="./post/'+ data[i]['id'] +'.html">'+ data[i]['title'] +'</a><span class="pull-right">'+ data[i]['time'] +'</span></h3><p>'+ data[i]['des'] +'</p></section>';
+      str += '<section class="inner main_content"><h3><a class="title" href="post.html?id='+ data[i]['id'] +'">'+ data[i]['title'] +'</a><span class="pull-right">'+ data[i]['time'] +'</span></h3><p>'+ data[i]['des'] +'</p></section>';
     }
 
     $('#main_content_wrap').append(str);
@@ -64,8 +64,13 @@ function find(obj){
         title += '<span style="background:orange;">' + data[i]['title'].substr(start, val.length) + '</span>';
         title += data[i]['title'].substr(start+val.length);
 
-        str += '<section class="inner main_content"><h3><a class="title" href="./post/'+ data[i]['id'] +'.html">'+ title +'</a><span class="pull-right">'+ data[i]['time'] +'</span></h3><p>'+ data[i]['des'] +'</p></section>';
+        str += '<section class="inner main_content"><h3><a class="title" href="post.html?id='+ data[i]['id'] +'">'+ title +'</a><span class="pull-right">'+ data[i]['time'] +'</span></h3><p>'+ data[i]['des'] +'</p></section>';
       }
+    }
+
+    //判断没搜到数据
+    if (str.indexOf('style') == -1) {
+      str += '<section class="inner main_content">暂无数据</section>';
     }
     $('#main_content_wrap').html(str);
 
@@ -83,3 +88,24 @@ function cancel(){
   page(p);
   flag = true;
 }
+
+//随机显示标题
+var title = [
+  '穷则独善其身，富则妻妾成群',
+  '君子成人之美，小人夺人所爱',
+  '英雄宝刀未老，老娘风韵犹存',
+  '天生我材必有用，老鼠儿子会打洞',
+  '书到用时方恨少，钱到月底不够花',
+  '两个黄鹂鸣翠柳，一行白鹭上西天',
+  '问君能有几多愁，恰似一群太监上青楼',
+  '相爱没有那么容易，每个人都有他的手机',
+  '如果天黑之前来得及，我要挖了你的眼睛',
+  '你所有为人称道的美丽，都有PS的痕迹',
+  '想飞上天和太阳肩并肩',
+  '大爷听过我的歌，小伙亲过我的脸',
+  '答应我你从此不在深夜里排队',
+  '我们坐在高高的骨灰旁边～～',
+  '千万别说你一无所有，至少你还有病啊'
+];
+var index = Math.ceil(Math.random() * title.length);
+$('#project_tagline').html(title[index]);

@@ -1,0 +1,48 @@
+<section class="inner main_content">
+  <h3 style="margin:40px 0;">
+    <span class="title">js获取通过URL传递的GET参数</span><br>
+    <span class="pull-right small">2016-07-31 16:32</span>
+  </h3>
+
+  <p>通过JS对URL地址的字符串处理，可以获得URL传递的参数，这里总结两种方法。</p>
+  <p>方式1：</p>
+  <pre>
+    function getPar(par){
+        //获取当前URL
+        var local_url = document.location.href; 
+        //获取要取得的get参数位置
+        var get = local_url.indexOf(par +"=");
+        if(get == -1){
+            return false;   
+        }   
+        //截取字符串
+        var get_par = local_url.slice(par.length + get + 1);    
+        //判断截取后的字符串是否还有其他get参数
+        var nextPar = get_par.indexOf("&");
+        if(nextPar != -1){
+            get_par = get_par.slice(0, nextPar);
+        }
+        return get_par;
+    }
+  </pre>
+  <p>方式2：</p>
+  <pre>
+    var $_GET = (function(){
+        var url = window.document.location.href.toString();
+        var u = url.split("?");
+        if(typeof(u[1]) == "string"){
+            u = u[1].split("&");
+            var get = {};
+            for(var i in u){
+                var j = u[i].split("=");
+                get[j[0]] = j[1];
+            }
+            return get;
+        } else {
+            return {};
+        }
+    })();
+  </pre>
+  <strong class="text-danger">注：方式2为模拟PHP的超全局数组$_GET, 使用时, 可以直接 $_GET['get参数'], 就直接获得GET参数的值</strong>
+
+</section>

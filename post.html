@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Lizelong——李泽龙的个人博客，学习资料，小知识，小技巧，记录成长。">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="css/stylesheet.css">
+    <!-- 引入bootstrap文件 -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/jquery1.11.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+
+    <title>有点意思</title>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer navbar-fixed-top">
+        <header class="head">
+          <h1 id="project_tagline">穷则独善其身，富则妻妾成群</h1>
+        </header>
+    </div>
+
+    <div class="position-btn text-info" onclick="pao(true)"><i class="glyphicon glyphicon-arrow-up"></i>顶部</div>
+    <div class="position-btn text-info" onclick="pao(false)" style="margin-top:50px"><i class="glyphicon glyphicon-arrow-down"></i>底部</div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer"></div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer navbar-fixed-bottom">
+      <footer class="inner">
+        <p>@本博客解释权归 <a href="http://www.copydm.com" target="_blank">李大爷</a> 所有</p>
+      </footer>
+    </div>
+  </body>
+</html>
+
+
+<script>
+//模拟PHP获取URL传的参数，比如$_GET['id']
+var $_GET = (function(){
+  var url = window.document.location.href.toString();
+  var u = url.split("?");
+  if(typeof(u[1]) == "string"){
+      u = u[1].split("&");
+      var get = {};
+      for(var i in u){
+          var j = u[i].split("=");
+          get[j[0]] = j[1];
+      }
+      return get;
+  } else {
+      return {};
+  }
+})();
+
+//滚动显示到顶和到底按钮
+$(window).scroll(function(){
+  if ($(window).scrollTop() > 10) {
+    $('.position-btn').show(800);
+  } else {
+    $('.position-btn').hide(800);
+  }
+})
+
+//点击跑动滚动条
+function pao(flag) {
+  if (flag) {
+    $('html,body').animate({'scrollTop': '0px'}, 1000);
+  } else {
+    $('html,body').animate({'scrollTop': $(document).height() + 'px'}, 1000);
+  }
+}
+
+//获取内容
+$.ajax({
+  url: './post/'+ $_GET['id'] +'.html',
+  type: 'get',
+  success: function(res){
+    $('#main_content_wrap').html(res);
+    $('#main_content_wrap .main_content').prepend('<a href="index.html" class="btn btn-info">返回列表</a>');
+  },
+  error: function(){
+    $('#main_content_wrap').html('<section class="inner main_content" style="font-size:25px"><i class="glyphicon glyphicon-share-alt"></i> <a href="index.html">暂时没有内容</a></section>');
+  }
+})
+
+//获取标题信息
+var data;
+if (data === undefined) {
+  //ajax请求
+  $.get('./title.html', '', function(res){
+    data = res;
+    var str = '<section class="inner main_content"> <ul class="pager">';
+    for (var i = 0; i < res.length; i++) {
+      if (res[i]['id'] == $_GET['id']) {
+        //修改标题和描述
+        document.title = res[i]['title']; 
+        $('meta[name=description]').attr('content', res[i]['des']);
+
+        //获取上一条的标题
+        if ($_GET['id'] <= 1) {
+          str += '<li class="previous disabled"><a><span>&larr;</span>没有了</a></li>';
+        } else {
+          str += '<li class="previous"><a href="?id='+ res[i+1]['id'] +'"><span>&larr;</span> '+ res[i+1]['title'] +'</a></li>';
+        }
+
+        //获取下一条的标题
+        if ($_GET['id'] >= res.length) {
+          str += '<li class="next disabled"><a>没有了<span>&rarr;</span></a></li></ul></section>';
+        } else {
+          str += '<li class="next"><a href="?id='+ res[i-1]['id'] +'">'+ res[i-1]['title'] +'<span>&rarr;</span></a> </li> </ul> </section>';
+        }
+      }
+    }
+    $('#main_content_wrap').append(str);
+  }, 'json');
+}
+
+//随机显示标题
+var title = [
+  '穷则独善其身，富则妻妾成群',
+  '君子成人之美，小人夺人所爱',
+  '英雄宝刀未老，老娘风韵犹存',
+  '天生我材必有用，老鼠儿子会打洞',
+  '书到用时方恨少，钱到月底不够花',
+  '两个黄鹂鸣翠柳，一行白鹭上西天',
+  '问君能有几多愁，恰似一群太监上青楼',
+  '相爱没有那么容易，每个人都有他的手机',
+  '如果天黑之前来得及，我要挖了你的眼睛',
+  '你所有为人称道的美丽，都有PS的痕迹',
+  '想飞上天和太阳肩并肩',
+  '大爷听过我的歌，小伙亲过我的脸',
+  '答应我你从此不在深夜里排队',
+  '我们坐在高高的骨灰旁边～～',
+  '千万别说你一无所有，至少你还有病啊'
+];
+var index = Math.ceil(Math.random() * title.length);
+$('#project_tagline').html(title[index]);
+</script>
