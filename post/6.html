@@ -1,0 +1,47 @@
+<section class="inner main_content">
+  <h3 style="margin:40px 0;">
+    <span class="title">mysql小黑框进行预处理操作</span><br>
+    <span class="pull-right small">2016-08-04 15:18</span>
+  </h3>
+
+  <p>mysql的小黑框也可以进行预处理操作，预处理语句的SQL语法基于三个SQL语句：</p>
+  
+  <strong class="text-danger">PREPARE stmt_name FROM "预处理sql";</strong><br>
+  <strong class="text-danger">EXECUTE stmt_name USING @var_name [, @var_name] ...;</strong><br>
+  <strong class="text-danger">{DEALLOCATE | DROP} PREPARE stmt_name;</strong>
+  
+  
+  <p>示例如下：</p>
+  <pre>
+mysql> prepare stmt1 from 'select * from t1 where id >?';
+Query OK, 0 rows affected (0.01 sec)
+Statement prepared
+
+mysql> set @i=1;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> execute stmt1 using @i;
++----+----------+----------+--------+-------+
+| id | username | password | status | descn |
++----+----------+----------+--------+-------+
+|  3 | 11       | 111      |      1 | 1111  |
+|  2 | 22       | 222      |      2 | 2222  |
+|  4 | 22       | 222      |      2 | 2222  |
++----+----------+----------+--------+-------+
+3 rows in set (0.01 sec)
+
+mysql> select * from t1;
++----+----------+----------+--------+-------+
+| id | username | password | status | descn |
++----+----------+----------+--------+-------+
+|  3 | 11       | 111      |      1 | 1111  |
+|  1 | 22       | 222      |      2 | 2222  |
+|  2 | 22       | 222      |      2 | 2222  |
+|  4 | 22       | 222      |      2 | 2222  |
++----+----------+----------+--------+-------+
+4 rows in set (0.00 sec)
+
+mysql>drop prepare stmt1;
+Query OK, 0 rows affected (0.06 sec)
+  </pre>
+</section>
