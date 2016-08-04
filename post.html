@@ -27,7 +27,60 @@
     <div class="position-btn text-info" onclick="pao(false)" style="margin-top:50px"><i class="glyphicon glyphicon-arrow-down"></i>底部</div>
 
     <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer"></div>
+    <div id="main_content_wrap" class="outer">
+      <div class="inner"> 
+        <a href="index.html" class="btn btn-info">返回列表</a> 
+      </div>
+
+      <div class="inner" id="content"></div>
+
+      <div class="inner" id="page"></div>
+
+      <div class="inner" id="review">
+        <a class="btn btn-warning">评论列表</a>
+        <ul class="list-unstyled review-list">
+          <li>
+            <span>匿名：</span>
+            <strong>好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！<button class="btn btn-sm btn-primary">回复</button></strong>
+            <!-- <ul>
+              <li>回复：哈哈哈哈哈哈哈哈啊哈</li>
+              <li>回复：哈哈哈哈哈哈哈哈啊哈</li>
+              <li>回复：哈哈哈哈哈哈哈哈啊哈</li>
+              <li>回复：哈哈哈哈哈哈哈哈啊哈</li>
+            </ul> -->
+          </li>
+
+          <li>
+            <span>匿名：</span>
+            <strong>好！！！内容！！！学习了！！！</strong>
+          </li>
+          <li>
+            <span>匿名：</span>
+            <strong>好！！！内容！！！学习了！！！</strong>
+          </li>
+          <li>
+            <span>匿名：</span>
+            <strong>好！！！内容！！！学习了！！！</strong>
+          </li>
+          <li>
+            <span>匿名：</span>
+            <strong>好！！！内容！！！学习了！！！</strong>
+          </li>
+          <li>
+            <span>匿名：</span>
+            <strong>好！！！内容！！！学习了！！！</strong>
+          </li>
+
+        </ul>
+
+        <a class="btn btn-info" style="margin-bottom:15px">说两句</a>
+        <form style="margin-left:20px" onsubmit="return review()">
+          <input type="text" name="name" placeholder="昵称" /><br>
+          <textarea name="content" placeholder="评论内容" require cols="90" rows="3"></textarea>
+          <button class="btn btn-sm btn-primary">写好了</button>
+        </form>
+      </div>
+    </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer navbar-fixed-bottom">
@@ -57,6 +110,36 @@ var $_GET = (function(){
   }
 })();
 
+//获取评论者的浏览器信息
+var useragent = window.navigator.userAgent;
+
+//获取屏幕尺寸
+var size = window.screen.width + ' * ' + window.screen.height;
+
+//处理评论
+function review(){
+  if ($('textarea').val().length < 5) {
+    alert('多说两个字嘛~~~');
+    return false;
+  }
+
+  $.ajax({
+    url: 'http://localhost/demo/blog/index.php/Home/Index/review',
+    type: 'post',
+    data: {pid:$_GET['id'], name: $('input[name=name]').val(), content:$('textarea').val(), browser: useragent, screen: size},
+    dataType: 'json',
+    success: function(res){
+      if (res.status) {
+        alert('评论成功');
+        $('form')[0].reset();
+      } else {
+        alert(res.msg);
+      }
+    }
+  })
+  return false;
+}
+
 //滚动显示到顶和到底按钮
 $(window).scroll(function(){
   if ($(window).scrollTop() > 10) {
@@ -80,9 +163,8 @@ $.ajax({
   url: './post/'+ $_GET['id'] +'.html',
   type: 'get',
   success: function(res){
-    $('#main_content_wrap').html(res);
-    $('#main_content_wrap .main_content').prepend('<a href="index.html" class="btn btn-info">返回列表</a>');
-    //获取标题
+    $('#content').html(res);
+    //获取翻页标题
     getTitle();
   },
   error: function(){
@@ -116,7 +198,7 @@ function getTitle() {
         }
       }
     }
-    $('#main_content_wrap').append(str);
+    $('#page').html(str);
   }, 'json');
 }
 
