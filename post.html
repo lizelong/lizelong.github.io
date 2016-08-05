@@ -39,42 +39,20 @@
       <div class="inner" id="review">
         <a class="btn btn-warning">评论列表</a>
         <ul class="list-unstyled review-list">
-          <li>
+          <!-- <li>
             <span>匿名：</span>
             <strong>好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！好！！！内容！！！学习了！！！<button class="btn btn-sm btn-primary">回复</button></strong>
-            <!-- <ul>
+            <ul>
               <li>回复：哈哈哈哈哈哈哈哈啊哈</li>
               <li>回复：哈哈哈哈哈哈哈哈啊哈</li>
               <li>回复：哈哈哈哈哈哈哈哈啊哈</li>
               <li>回复：哈哈哈哈哈哈哈哈啊哈</li>
-            </ul> -->
-          </li>
-
-          <li>
-            <span>匿名：</span>
-            <strong>好！！！内容！！！学习了！！！</strong>
-          </li>
-          <li>
-            <span>匿名：</span>
-            <strong>好！！！内容！！！学习了！！！</strong>
-          </li>
-          <li>
-            <span>匿名：</span>
-            <strong>好！！！内容！！！学习了！！！</strong>
-          </li>
-          <li>
-            <span>匿名：</span>
-            <strong>好！！！内容！！！学习了！！！</strong>
-          </li>
-          <li>
-            <span>匿名：</span>
-            <strong>好！！！内容！！！学习了！！！</strong>
-          </li>
-
+            </ul>
+          </li> -->
         </ul>
 
         <a class="btn btn-info" style="margin-bottom:15px">说两句</a>
-        <form style="margin-left:20px" onsubmit="return review()">
+        <form style="margin-left:20px" onsubmit="return review(this)">
           <input type="text" name="name" placeholder="昵称" /><br>
           <textarea name="content" placeholder="评论内容" require cols="90" rows="3"></textarea>
           <button class="btn btn-sm btn-primary">写好了</button>
@@ -88,6 +66,21 @@
         <p>@本博客解释权归 <a href="http://www.copydm.com" target="_blank">李大爷</a> 所有</p>
       </footer>
     </div>
+  
+  <!-- 小模态框 -->
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <form onsubmit="return reply(this)">
+            <input type="hidden" name="rid" />
+            <input type="text" class="form-control" name="name" placeholder="昵称">
+            <textarea class="form-control" rows="3" placeholder="回复内容"></textarea>
+            <button class="btn btn-xs btn-primary center-block">写好了</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
   </body>
 </html>
 
@@ -116,21 +109,99 @@ var useragent = window.navigator.userAgent;
 //获取屏幕尺寸
 var size = window.screen.width + ' * ' + window.screen.height;
 
+//给评论的li绑定鼠标事件
+$('.review-list').on('mouseenter', 'li', function(){
+  $(this).find('strong:last').after('<button class="btn btn-xs pull-right btn-primary" onclick="replyInfo('+ $(this).attr('rid') +')">回复</button>');
+})
+
+$('.review-list').on('mouseleave', 'li', function(){
+  $(this).find('button').remove();
+})
+
+//显示模态框
+function replyInfo(rid) {
+  $('input[name=rid]').val(rid);
+  $('.modal').modal({
+    keyboard: false
+  })
+}
+
+//处理回复操作
+function reply(obj){
+  var content = $(obj).find('textarea').val();
+  if (content.length < 3) {
+    alert('多说两个字吧');
+    return false;
+  };
+
+  //获取回复者昵称
+  var name = $(obj).find('input[name=name]').val() || '匿名';
+
+  //获取review评论ID
+  var rid = $(obj).find('input[name=rid]').val();
+
+  $.ajax({
+    url: 'http://www.copydm.com/blog/index.php/Home/Index/reply',
+    data: {rid:rid, name:name, content:content, browser: useragent, screen: size},
+    type: 'post',
+    dataType: 'json', 
+    success: function(res){
+      if (res['status']) {
+        //添加回复到页面
+        if ($('li[rid='+ rid +'] ul li').length > 0) {
+          $('li[rid='+ rid +'] ul').append('<li>'+ name +'： '+ content +'</li>');
+        } else {
+          $('li[rid='+ rid +'] ul').append('<li class="reply-first">回复：</li><li>'+ name +'： '+ content +'</li>');
+        }
+
+        //清除表单数据
+        $('.modal').find('form')[0].reset();
+        //隐藏模态框
+        $('.modal').modal('hide');
+      } else {
+        alert(res['msg']);
+      }
+    }
+  })
+  return false;
+}
+
+
+
 //处理评论
-function review(){
-  if ($('textarea').val().length < 5) {
+function review(obj){
+  var content = $(obj).find('textarea').val();
+  if (content.length < 5) {
     alert('多说两个字嘛~~~');
     return false;
   }
+  //获取评论者昵称
+  var name = $(obj).find('input[name=name]').val() || '匿名';
 
+  //ajax提交添加数据
   $.ajax({
-    url: 'http://localhost/demo/blog/index.php/Home/Index/review',
+    url: 'http://www.copydm.com/blog/index.php/Home/Index/review',
     type: 'post',
-    data: {pid:$_GET['id'], name: $('input[name=name]').val(), content:$('textarea').val(), browser: useragent, screen: size},
+    data: {pid:$_GET['id'], name: name, content:content, browser: useragent, screen: size},
     dataType: 'json',
     success: function(res){
       if (res.status) {
-        alert('评论成功');
+        var floor = $('.review-list > li:last .small').text();
+        if (floor) {
+          floor = parseInt(floor.substr(1)) + 1;
+        } else {
+          floor = 1;
+        }
+        //将评论的内容增加到页面上
+        var str = '<li rid="'+ res['id'] +'"><strong class="text-danger small">#'+ floor +' </strong><span>'+ name +'：</span><br><strong>　　'+ content +'</strong><ul></ul></li>';
+        //判断是否是沙发
+        if (floor == 1) {
+          $('.review-list').html(str);
+        } else {
+          $('.review-list').append(str);
+        }
+
+        //清空表单
         $('form')[0].reset();
       } else {
         alert(res.msg);
@@ -139,6 +210,35 @@ function review(){
   })
   return false;
 }
+
+//还得去查询当前帖子的评论和回复。。。
+$.ajax({
+  url: 'http://www.copydm.com/blog/index.php/Home/Index/getView',
+  type: 'post',
+  data: {pid: $_GET['id']},
+  dataType: 'json',
+  success: function(res){
+    var str = '';
+    if (res) {
+      for (var i = 0,len = res.length; i < len; i++) {
+        str += '<li rid="'+ res[i]['id'] +'"><strong class="text-danger small">#'+ (i+1) +' </strong><span>'+ res[i]['name'] +'：</span><br><strong>　　'+ res[i]['content'] +'</strong>';
+        //评论下的回复
+        str += '<ul>';
+        if (res[i]['reply']) {
+          str += '<li class="reply-first">回复：</li>';
+          for (var j = 0, leng = res[i]['reply'].length; j < leng; j++) {
+            str += '<li>'+ res[i]['reply'][j]['name'] +'：'+ res[i]['reply'][j]['content'] +'</li>';
+          };
+        }
+        str += '</ul></li>';
+      }
+
+    } else {
+      str += '<li><strong>暂无评论，快来抢沙发吧~~~</strong></li>';
+    }
+    $('.review-list').html(str);
+  }
+})
 
 //滚动显示到顶和到底按钮
 $(window).scroll(function(){
