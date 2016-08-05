@@ -111,9 +111,10 @@ var size = window.screen.width + ' * ' + window.screen.height;
 
 //给评论的li绑定鼠标事件
 $('.review-list').on('mouseenter', 'li', function(){
-  $(this).find('strong:last').after('<button class="btn btn-xs pull-right btn-primary" onclick="replyInfo('+ $(this).attr('rid') +')">回复</button>');
+  if ($(this).attr('rid')) {
+    $(this).find('strong:last').after('<button class="btn btn-xs pull-right btn-primary" onclick="replyInfo('+ $(this).attr('rid') +')">回复</button>');
+  }
 })
-
 $('.review-list').on('mouseleave', 'li', function(){
   $(this).find('button').remove();
 })
@@ -140,6 +141,7 @@ function reply(obj){
   //获取review评论ID
   var rid = $(obj).find('input[name=rid]').val();
 
+  $(obj).find('button').attr('disabled', true);
   $.ajax({
     url: 'http://www.copydm.com/blog/index.php/Home/Index/reply',
     data: {rid:rid, name:name, content:content, browser: useragent, screen: size},
@@ -154,6 +156,8 @@ function reply(obj){
           $('li[rid='+ rid +'] ul').append('<li class="reply-first">回复：</li><li>'+ name +'： '+ content +'</li>');
         }
 
+        //恢复按钮状态
+        $(obj).find('button').attr('disabled', false);
         //清除表单数据
         $('.modal').find('form')[0].reset();
         //隐藏模态框
@@ -178,6 +182,7 @@ function review(obj){
   //获取评论者昵称
   var name = $(obj).find('input[name=name]').val() || '匿名';
 
+  $(obj).find('button').attr('disabled', true);
   //ajax提交添加数据
   $.ajax({
     url: 'http://www.copydm.com/blog/index.php/Home/Index/review',
@@ -201,6 +206,8 @@ function review(obj){
           $('.review-list').append(str);
         }
 
+        //回复按钮状态
+        $(obj).find('button').attr('disabled', false);
         //清空表单
         $('form')[0].reset();
       } else {
