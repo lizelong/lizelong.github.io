@@ -11,20 +11,20 @@ page(p);          //默认加载第一页数据
  */
 function page(p, num){
   //设置默认显示10条
-  if (num === undefined) num = 5;
+  if (num === undefined) num = 2;
 
   //判断data是否有值
   if (data === undefined) {
     //ajax请求
     $.get('./title.html', '', function(res){
       data = res;
-      total = Math.ceil(res.length / num);  //总页码数
-      var end = Math.min(num, res.length);
+      total = Math.ceil(data.length / num);  //总页码数
+      var end = Math.min(num, data.length);
       var str = '';
       for (var i = 0; i < end; i++) {
-        str += '<section class="inner main_content"><h3><a class="title" href="post.html?id='+ res[i]['id'] +'">'+ res[i]['title'] +'</a><span class="pull-right">'+ res[i]['time'] +'</span></h3><p>'+ res[i]['des'] +'</p></section>';
+        str += '<article class="widget"> <header class="widget-header"> <h2 class="widget-title"> <a href="post.html?id='+ data[i]['id'] +'">'+ data[i]['title'] +'</a> </h2> <div class="widget-meta"> <span>发表于 '+ data[i]['time'] +'</span> <span class="divider">/</span> </div> <div class="hr-line"></div> </header> <section class="widget-body"> '+ data[i]['des'] +'</section> <section class="widget-footer"> <a class="btn" href="post.html?id='+ data[i]['id'] +'">阅读全文</a> </section> </article>';
       }
-
+      console.log(data);
       $('#main_content_wrap').append(str);
     }, 'json');
   } else {
@@ -32,7 +32,7 @@ function page(p, num){
     var end = Math.min((start + num), data.length);
     var str = '';
     for (var i = start; i < end; i++) {
-      str += '<section class="inner main_content"><h3><a class="title" href="post.html?id='+ data[i]['id'] +'">'+ data[i]['title'] +'</a><span class="pull-right">'+ data[i]['time'] +'</span></h3><p>'+ data[i]['des'] +'</p></section>';
+      str += '<article class="widget"> <header class="widget-header"> <h2 class="widget-title"> <a href="post.html?id='+ data[i]['id'] +'">'+ data[i]['title'] +'</a> </h2> <div class="widget-meta"> <span>发表于 '+ data[i]['time'] +'</span> <span class="divider">/</span> </div> <div class="hr-line"></div> </header> <section class="widget-body"> '+ data[i]['des'] +'</section> <section class="widget-footer"> <a class="btn" href="post.html?id='+ data[i]['id'] +'">阅读全文</a> </section> </article>';
     }
 
     $('#main_content_wrap').append(str);
@@ -55,7 +55,7 @@ function find(obj){
   if (obj === undefined) obj = $('#search')[0];
   var val = obj.value;
   if (val != '') {
-    var str = '<section class="inner main_content"><button type="button" onclick="cancel()" class="btn-info">取消搜索</button></section>';
+    var str = '<section><button type="button" onclick="cancel()" class="btn-info">取消搜索</button></section>';
     for (var i in data) {
       var start = data[i]['title'].indexOf(val);
       if (start != -1) {
@@ -63,14 +63,13 @@ function find(obj){
         var title = data[i]['title'].substr(0, start);
         title += '<span style="background:orange;">' + data[i]['title'].substr(start, val.length) + '</span>';
         title += data[i]['title'].substr(start+val.length);
-
-        str += '<section class="inner main_content"><h3><a class="title" href="post.html?id='+ data[i]['id'] +'">'+ title +'</a><span class="pull-right">'+ data[i]['time'] +'</span></h3><p>'+ data[i]['des'] +'</p></section>';
+        str += '<article class="widget"> <header class="widget-header"> <h2 class="widget-title"> <a href="post.html?id='+ data[i]['id'] +'">'+ title +'</a> </h2> <div class="widget-meta"> <span>发表于 '+ data[i]['time'] +'</span> <span class="divider">/</span> </div> <div class="hr-line"></div> </header> <section class="widget-body"> '+ data[i]['des'] +'</section> <section class="widget-footer"> <a class="btn" href="post.html?id='+ data[i]['id'] +'">阅读全文</a> </section> </article>';
       }
     }
 
     //判断没搜到数据
     if (str.indexOf('style') == -1) {
-      str += '<section class="inner main_content">暂无数据</section>';
+      str += '<section class="widget"><h2>暂无数据</h2></section>';
     }
     $('#main_content_wrap').html(str);
 

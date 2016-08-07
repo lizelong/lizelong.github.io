@@ -1,0 +1,57 @@
+.position-btn {
+  width:50px;
+  height:50px;
+  line-height:50px;
+  background:#ccc;
+  cursor:pointer;
+  position:fixed;
+  color:#999;
+  right:0px;
+  top:50%;
+  margin-top:-25px;
+  display:none;
+}
+.position-btn:hover{
+  background:#aaa;
+}
+
+/* 评论列表 */
+.review-content{
+  padding-left:20px;
+}
+
+#review .post-comment:hover{
+  background:#eee;
+}
+
+#review .post-comment ul{
+  color:rgb(16, 107, 140);
+  margin-left:20px;
+}
+
+
+
+.review-list > li{
+  font-size:20px;
+  margin:10px 0px;
+  border-bottom:1px solid #ccc;
+}
+
+.review-list > li:hover{
+  background:#ccc;
+}
+
+.review-list li ul{
+  color:rgb(16, 107, 140);
+}
+.review-list li ul li{
+  list-style: none;
+  font-size:14px;
+  margin-left:23px;
+}
+
+.review-list li ul .reply-first{
+  margin-left:-21px;
+  font-size:18px;
+  margin-top:15px;
+}
