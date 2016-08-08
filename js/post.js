@@ -20,6 +20,15 @@ var index = Math.ceil(Math.random() * title.length);
 $('#project_tagline').html(title[index]);
 //============== 随机显示标题 end
 
+//实现PHP的in_array功能
+// function in_array(val, arr) {
+//   for (var x = 0; x < arr.length; x++) {
+//     if (val == arr[x]['id']) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
 //============== 获取上一篇下一篇的标题信息 start
 function getTitle() {
@@ -80,12 +89,14 @@ $.ajax({
   url: './post/'+ $_GET['id'] +'.html',
   type: 'get',
   success: function(res){
-    $('.widget-body').html(res);
+    if (res) {
+      $('.widget-body').html(res);
+    }
     //获取翻页标题
     getTitle();
   },
   error: function(){
-    $('#main_content_wrap').html('<section class="inner main_content" style="font-size:25px"><i class="glyphicon glyphicon-share-alt"></i> <a href="index.html">暂时没有内容</a></section>');
+    window.location.href = './index.html';
   }
 })
 //============== 获取帖子内容 end
@@ -152,13 +163,14 @@ var size = window.screen.width + ' * ' + window.screen.height;
 
 function review(obj){
   var content = $(obj).find('textarea').val();
-  if (content.length < 5) {
+  if (content.length < 5 || content.match(/^ +$/)) {
     alert('多说两个字嘛~~~');
     return false;
   }
   //获取评论者昵称
   var name = $(obj).find('input[name=name]').val() || '匿名';
-
+  if (name.match(/^ +$/)) name = '匿名';
+  
   $(obj).find('button').attr('disabled', true);
   //ajax提交添加数据
   $.ajax({
@@ -221,13 +233,14 @@ function replyInfo(rid) {
 //======================= 处理回复操作 start
 function reply(obj){
   var content = $(obj).find('textarea').val();
-  if (content.length < 3) {
+  if (content.length < 3 || content.match(/^ +$/)) {
     alert('多说两个字吧');
     return false;
   };
 
   //获取回复者昵称
   var name = $(obj).find('input[name=name]').val() || '匿名';
+  if (name.match(/^ +$/)) name = '匿名';
 
   //获取review评论ID
   var rid = $(obj).find('input[name=rid]').val();
