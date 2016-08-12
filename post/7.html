@@ -1,0 +1,50 @@
+<section>
+
+  <p>普通大小的整数。带符号的范围是-2147483648到2147483647。无符号的范围是0到4294967295。</p>
+  <p>INT(3) 和 INT(10)本身没有区别，但是加上(M)值后，会有显示宽度的设置。</p>
+  <p>比如int(10)，当插入的数据不足10位时，会在前面补0，补到10位为止。但前提是建表的时候需要指定字段为zerofill才能看出区别</p>
+  
+  <p>普通示例如下：</p>
+<pre>
+<span class="text-danger">1.查看建表语句：</span>
+	mysql> <strong>show create table test_int;</strong>
+	| test_int | CREATE TABLE `test_int` (
+	  `one` int(3) DEFAULT NULL,
+	  `two` int(10) DEFAULT NULL
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8 |
+
+<span class="text-danger">2.添加两条数据，分别是1位和5位：</span>
+	mysql> <strong>insert into test_int values(1, 1), (55555, 55555);</strong>
+	Query OK, 2 rows affected (0.00 sec)
+	Records: 2  Duplicates: 0  Warnings: 0
+
+<span class="text-danger">3.查看显示，int(3)和int(10)的没有任何区别：</span>
+	mysql> <strong>select * from test_int;</strong>
+	+-------+-------+
+	| one   | two   |
+	+-------+-------+
+	|     1 |     1 |
+	| 55555 | 55555 |
+	+-------+-------+
+	2 rows in set (0.00 sec)
+
+<span class="text-danger">4.修改字段信息，将int(3)和int(10)都加上zerofill：</span>
+	mysql> <strong>alter table test_int modify one int(3) zerofill;</strong>
+	Query OK, 2 rows affected (0.13 sec)
+	Records: 2  Duplicates: 0  Warnings: 0
+
+	mysql> <strong>alter table test_int modify two int(10) zerofill;</strong>
+	Query OK, 2 rows affected (0.13 sec)
+	Records: 2  Duplicates: 0  Warnings: 0
+
+<span class="text-danger">5.查看显示，int(3)和int(10)的显示宽度就不一样了，但它们的取值范围都是一样的，无符号-2147483648到2147483647，超出这个范围的数据都无法插入：</span>
+	mysql> <strong>select * from test_int;</strong>
+	+-------+------------+
+	| one   | two        |
+	+-------+------------+
+	|   001 | 0000000001 |
+	| 55555 | 0000055555 |
+	+-------+------------+
+	2 rows in set (0.00 sec)
+</pre>
+</section>
