@@ -1,0 +1,28 @@
+<section>
+<div>
+	<p>跨域请求除了在客户端用jsonp的方式实现外，还可以在服务端通过设置<strong>Access-Control-Allow-Origin</strong>来实现。</p>
+	<p>例如：客户端的域名是client.runoob.com，而请求的域名是server.runoob.com。</p>
+	<p>如果直接使用ajax访问，会有以下错误：</p>
+	<pre class="prettyprint prettyprinted"><span class="typ">XMLHttpRequest</span><span class="pln"> cannot load http</span><span class="pun">:</span><span class="com">//server.runoob.com/server.php. No 'Access-Control-Allow-Origin' header is present on the requested resource.Origin 'http://client.runoob.com' is therefore not allowed access.</span></pre>
+	<h2>1、允许单个域名访问</h2>
+	<p>指定某域名（http://client.runoob.com）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：</p>
+	<pre class="prettyprint prettyprinted"><span class="pln">header</span><span class="pun">(</span><span class="str">'Access-Control-Allow-Origin:http://client.runoob.com'</span><span class="pun">);</span></pre>
+	<h2>2、允许多个域名访问</h2>
+
+	<p>
+	指定多个域名（http://client1.runoob.com、http://client2.runoob.com等）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：</p>
+	<pre class="prettyprint prettyprinted"><span class="pln">$origin </span><span class="pun">=</span><span class="pln"> isset</span><span class="pun">(</span><span class="pln">$_SERVER</span><span class="pun">[</span><span class="str">'HTTP_ORIGIN'</span><span class="pun">])?</span><span class="pln"> $_SERVER</span><span class="pun">[</span><span class="str">'HTTP_ORIGIN'</span><span class="pun">]</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> </span><span class="str">''</span><span class="pun">;</span><span class="pln">  
+	  
+	$allow_origin </span><span class="pun">=</span><span class="pln"> array</span><span class="pun">(</span><span class="pln">  
+	    </span><span class="str">'http://client1.runoob.com'</span><span class="pun">,</span><span class="pln">  
+	    </span><span class="str">'http://client2.runoob.com'</span><span class="pln">  
+	</span><span class="pun">);</span><span class="pln">  
+	  
+	</span><span class="kwd">if</span><span class="pun">(</span><span class="pln">in_array</span><span class="pun">(</span><span class="pln">$origin</span><span class="pun">,</span><span class="pln"> $allow_origin</span><span class="pun">)){</span><span class="pln">  
+	    header</span><span class="pun">(</span><span class="str">'Access-Control-Allow-Origin:'</span><span class="pun">.</span><span class="pln">$origin</span><span class="pun">);</span><span class="pln">       
+	</span><span class="pun">}</span><span class="pln"> </span></pre>
+	<h2>3、允许所有域名访问</h2>
+	<p>允许所有域名访问则只需在http://server.runoob.com/server.php文件头部添加如下代码：</p><p>
+	</p><pre class="prettyprint prettyprinted"><span class="pln">header</span><span class="pun">(</span><span class="str">'Access-Control-Allow-Origin:*'</span><span class="pun">);</span><span class="pln"> </span></pre>				
+</div>
+</section>
