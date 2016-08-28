@@ -24,7 +24,7 @@ function page(p, num){
       for (var i = 0; i < end; i++) {
         str += '<article class="widget"> <header class="widget-header"> <h2 class="widget-title"> <a href="post.html?id='+ data[i]['id'] +'">'+ data[i]['title'] +'</a> </h2> <div class="widget-meta"> <span>发表于 '+ data[i]['time'] +'</span> <span class="divider">/</span> </div> <div class="hr-line"></div> </header> <section class="widget-body"> '+ data[i]['des'] +'</section> <section class="widget-footer"> <a class="btn" href="post.html?id='+ data[i]['id'] +'">阅读全文</a> </section> </article>';
       }
-      console.log(data);
+      // console.log(data);
       $('#main_content_wrap').append(str);
     }, 'json');
   } else {

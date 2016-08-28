@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>有点意思</title>
+    <meta name="description" content="Lizelong —— 瞎写一些记录成长。">
+    <meta name="keyword" content="Lizelong 个人博客 学习资料 小知识 小技巧 记录成长">
+
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="shortcut icon" href="./images/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/onepice.min.css">
+    <meta name="referrer" content="origin">
+    <style>
+		#tab{border:1px solid red;margin:0 auto;}
+		#tab td{width:10px; height:10px; /*border:1px solid red;*/}
+		.snake{background:green;}
+		.food{background:black;}
+
+		/* 排行榜 */
+		.ranking{position:absolute;}
+    </style>
+</head>
+
+<body>
+<div class="body-inner">
+<header class="header">
+    <div class="header-inner">
+        <div class="site-meta">
+            <div class="brand">
+                <div class="brand-before-line"></div>
+                <a id="project_tagline">穷则独善其身，富则妻妾成群</a>
+                
+                <div class="brand-before-line"></div>
+            </div>
+        </div>
+        <div class="site-nav" id="SiteMenu">
+            <ul class="nav">
+                <li class="nav-home nav-current" role="presentation"><a href="index.html">Home</a></li>
+            </ul>
+        </div>
+    </div>
+</header>   
+<center>
+    <button onclick="start()">开始</button>
+    <button onclick="location.reload()">重来</button><br>
+    <sub>温馨提示：按ctrl键也可以开始哦~~~</sub>
+</center>
+<div class="ranking">
+	<h4>前10名</h4>
+	<table></table>
+</div>
+<!-- 尾部start -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="copyright">
+            ©
+            <span class="copy-year">2016 - 2021</span>
+            <span class="love-with"> <i class="fa fa-heart-o"></i> </span>
+            <span class="copy-author">最终解释权归 <a target="_blank" href="http://www.copydm.com">Li zelong</a> 所有</span>
+        </div>
+    </div>
+</footer>
+<!-- 尾部end -->
+</div>
+
+	<!-- 小模态框 -->
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <form onsubmit="return save(this)">
+            <input type="hidden" name="store" />
+            <input type="text" class="form-control" name="name" placeholder="取个名字吧">
+	        <h2>很遗憾，你挂了！共获得了 <strong></strong> 分，是否保存？</h2>
+            <button class="btn">保存</button>
+            <button type="button" onclick="$('.modal').modal('hide')" class="btn">算了</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+</body>
+<script type="text/javascript" src="./js/jquery1.11.min.js"></script>
+<script src="./js/bootstrap.min.js"></script>
+<script>
+	//获取评论者的浏览器信息和屏幕尺寸
+	var useragent = window.navigator.userAgent;
+	var size = window.screen.width + ' * ' + window.screen.height;
+
+	//获取前十排行榜
+	(function(){
+		$('.ranking table').load('http://www.copydm.com/blog/index.php/Home/Index/ranking');
+	})();
+
+	//保存玩家分数
+	function save(obj) {
+		if ($(obj).find('input[name=name]').val().length <= 0) {
+			$(obj).find('input[name=name]').css('border', '1px solid #a00')[0].focus();
+			return false;
+		} else {
+			$(obj).find('input[name=name]').css('border', '1px solid #ccc');
+
+			//获取review评论ID
+		  	var store = $(obj).find('input[name=store]').val();
+  			var name = $(obj).find('input[name=name]').val();
+
+		  	$(obj).find('button').attr('disabled', true);
+		  	$.ajax({
+		    	url: 'http://www.copydm.com/blog/index.php/Home/Index/play',
+		    	data: {store:store, name:name, browser: useragent, screen: size},
+		    	type: 'post',
+		    	dataType: 'json', 
+		    	success: function(res){
+		      		if (res['status']) {
+				        location.reload();
+			      	} else {
+			        	alert(res['msg']);
+			      	}
+		    	}
+		  	})
+		}
+		return false;
+	}
+
+	var rows = 30;	//表格的行
+	var cols = 100;	//表格的列
+	var timer;		//定时器
+	var store = 0;	//分数
+
+	//1.写一个表格
+	document.write('<table id="tab" cellspacing="0">');
+		for (var i = 0; i < rows; i++) {
+			document.write('<tr>');
+			for (var j = 0; j < cols; j++) {
+				document.write('<td id="box_'+i+'_'+j+'"> </td>');
+			};
+			document.write('</tr>');
+		};
+	document.write('</table>');
+
+	//2.初始化小蛇
+	function snake(arr) {
+		for (var i = 0; i < arr.length; i++) {
+			var res = arr[i].split('_');
+			var obj = document.getElementById('box_'+res[0]+'_'+res[1]);
+			obj.className = 'snake';
+
+			//10.判断是不是咬到了尾巴
+			if (i == arr.length-1) {
+				continue;
+			} else if (arr[arr.length-1] == arr[i]) {
+				alert('死了');
+				// clearInterval(timer);
+				if (confirm('要重来不？')) location.reload();
+				return;
+			}
+		}
+	}
+
+	//初始化数组，3个方块
+	var arr = ['3_3', '3_4', '3_5'];
+
+	//3.定义一个函数，让小蛇先动起来
+	function start(){
+		if (timer === undefined) {
+			timer = setInterval(function(){
+				//5.根据方向键来处理数组
+				var first = arr.shift();				//弹出队列中第一个
+				var head = arr.pop();					//获取最后一个
+				var y = parseInt(head.split('_')[0]);	//获取蛇头是第几行
+				var x = parseInt(head.split('_')[1]);	//获取蛇头是第几列
+				switch (direction) {
+					case 37: 	//左
+						arr.push( head, y+'_'+(x-1) );
+						break;
+					case 38: 	//上
+						arr.push( head, (y-1)+'_'+x );
+						break;
+					case 39: 	//右
+						arr.push( head, y+'_'+(x+1) );
+						break;
+					case 40: 	//下
+						arr.push( head, (y+1)+'_'+x );
+						break;
+				}
+
+				//6.判断是不是死了
+				// console.log(x, y);
+				// console.dir(arr);
+				if (x >= cols || x < 0 || y >= rows || y < 0) {
+					clearInterval(timer);
+					$('h2 strong').html(store);
+					$('input[name=store]').val(store);
+					$('.modal').modal({
+					    keyboard: false,
+					    backdrop: 'static',
+					})
+					return;
+				}
+
+				document.getElementById('box_'+first).className = '';//干掉尾巴的颜色
+
+				//9.判断吃到食物了没
+				if (head == foodSite) {
+					arr.unshift(first);
+					//改变食物颜色
+					var yFood = document.getElementById('box_'+foodSite);
+					yFood.className = 'snake';
+					food();	//重新生成食物
+					// debugger;
+					//console.dir(arr);
+					store++;
+				}
+				//让它先动起来			
+				snake(arr);
+			}, 50);
+
+			food();					//随机生成一个食物
+			// btn.disabled = true;	//开始后禁用按钮
+		}
+	}
+	// start();
+
+	//4.处理方向键
+	var prevdirection;	//蛇上一步的前进方向
+    var direction = 39;	//蛇的前进方向,默认往右
+	document.onkeydown = function(e){
+		var e = e || window.event;
+        prevdirection = direction;
+        direction = e.keyCode;
+
+        //本地的电脑，双击的时候自动触发了ctrl + c，双击也可以开始，或者选中文本也可以开始
+        // alert(e.keyCode);
+        //按ctrl键开始
+        if (e.ctrlKey) start();
+
+        if(direction > 40 || direction < 37){	//判断是否按的其他键
+            direction = prevdirection;
+        }
+        if(prevdirection == 37 && direction == 39){//如果方向是左，则向右无效
+            direction = 37;
+        }
+        if(prevdirection == 38 && direction == 40){//如果方向是上，则向下无效
+            direction = 38;
+        }
+        if(prevdirection == 39 && direction == 37){//如果方向是右，则向左无效
+            direction = 39;
+        }
+        if(prevdirection == 40 && direction == 38){//如果方向是下，则向上无效
+            direction = 40;
+        }
+
+	}
+
+	//7.随机生成一个食物，并保存到全局变量，用于后面判断
+	var foodSite;
+	function food()
+	{
+		var x = Math.floor(Math.random() * cols);
+		var y = Math.floor(Math.random() * rows);
+
+		//判断食物是否在蛇身上
+		while (in_array(x+'_'+y, arr)) {
+			x = Math.floor(Math.random() * cols);
+			y = Math.floor(Math.random() * rows);
+		}
+		//将当前食物位置保存到全局变量
+		foodSite = y + '_' + x;
+
+		foodId = 'box_' + y + '_' + x;
+		var foodObj = document.getElementById(foodId);
+		if (!foodObj) alert('出问题了：' + foodId);
+		foodObj.className = 'food';	//改变食物的颜色
+	}
+
+	//8.JS实现PHP的in_array()函数
+	function in_array(val, arr) 
+	{
+		for (var k in arr) {
+			if (arr[k] == val) {
+				return true;	//存在数组中
+			}
+			return false;
+		}
+	}
+
+</script>
+</html>
