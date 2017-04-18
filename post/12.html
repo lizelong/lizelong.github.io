@@ -4,9 +4,9 @@
     </style>
 
     <p class="con_p">众所周知，sublime非常适合写代码，但是不适合看代码、查代码，比如zendstudio或者PHPstorm，在想查看父类代码的时候，只需要按住ctrl+鼠标左键就好了，所以很方便。那么sublime能否实现类似的效果呢？答案是当然可以！只需要借助一款叫CTags的插件就ok！</p>
-    <p class="con_p">关于如何安装sublime的插件，方式都是一样的，这里也顺便提一下吧:</p>
+    <p style="font-size:20px">安装sublime插件的方式都是一样的，具体步骤如下:</p>
 
-    <ol>
+    <ol style="font-size:20px">
       <li>
         首先需要安装Package Control（如果安装过了就跳过这一步）<br>
         <ul style="list-style:none;">
@@ -21,15 +21,13 @@
         </ul>
       </li>
       <li>
-        打开Sublime Text 2/3软件，在Preferences(首选项)菜单中打开Package Control(插件控制)，打开后找到install packages并点击。或者直接使用ctrl + shift + p 并输入install回车！
+        打开Sublime，在Preferences(首选项)菜单中打开Package Control(插件控制)，打开后找到install packages并点击。或者直接使用ctrl + shift + p 并输入install回车！<br>
+        到这一步，如果没有弹窗报错，那直接搜索ctags， 回车执行，稍等一会看到左下角提示安装成功就好了。如果是要安装其他的插件，那直接搜索要安装的插件名回车就行。
+      </li>
+      <li>
         <p>
-          到这一步，如果没有弹窗报错，那直接搜索ctags， 回车执行，稍等一会看到左下角提示安装成功就好了
-        </p>
-        <p>
-          如果弹出错误显示Package Control：there are no packages for installation，那就有点麻烦了。网上有说是IPV6的问题，有说是被墙的问题。个人经历，我将IPV6禁用了，也根据资料改了hosts文件，都没用。用了VPN翻墙，Google和YouTube都能正常访问，install插件的时候还是弹窗报这个错，后来索性没管它了，直接去GitHub上面下的zip包，然后解压到了 C:\Program Files\Sublime Text 3\Data\Packages\CTags 目录下(前面那截请换成自己的sublime的安装目录)
-        </p>
-        <p>
-          下载地址：<a target="_blank" href="https://github.com/SublimeText/CTags">https://github.com/SublimeText/CTags</a>
+          如果弹出错误显示Package Control：there are no packages for installation，那就有点麻烦了。网上有说是IPV6的问题，有说是被墙的问题。个人经历，我将IPV6禁用了，也根据资料改了hosts文件，都没用。用了VPN翻墙，Google和YouTube都能正常访问，install插件的时候还是弹窗报这个错，后来索性没管它了，直接去GitHub上面下的zip包，然后解压到了 C:\Program Files\Sublime Text 3\Data\Packages\CTags 目录下(前面那截请换成自己的sublime的安装目录)<br>
+          CTags下载地址：<a target="_blank" href="https://github.com/SublimeText/CTags">https://github.com/SublimeText/CTags</a>
         </p>
         <p>
           windows使用还需要一个ctags.exe文件需要下载<br>
