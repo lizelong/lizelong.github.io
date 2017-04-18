@@ -1,0 +1,55 @@
+<section>
+    <style>
+        .con_p{font-size:20px;text-indent:2em;}
+    </style>
+
+    <p class="con_p">众所周知，sublime非常适合写代码，但是不适合看代码、查代码，比如zendstudio或者PHPstorm，在想查看父类代码的时候，只需要按住ctrl+鼠标左键就好了，所以很方便。那么sublime能否实现类似的效果呢？答案是当然可以！只需要借助一款叫CTags的插件就ok！</p>
+    <p class="con_p">关于如何安装sublime的插件，方式都是一样的，这里也顺便提一下吧:</p>
+
+    <ol>
+      <li>
+        首先需要安装Package Control（如果安装过了就跳过这一步）<br>
+        <ul style="list-style:none;">
+          <li>
+            通过ctrl+~唤出控制台并在控制台粘贴以下代码：<br>
+            <span>sublime3：</span>
+            <pre>import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)</pre>
+            <span>sublime2：</span>
+            <pre>import urllib2,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); os.makedirs( ipp ) if not os.path.exists(ipp) else None; urllib2.install_opener( urllib2.build_opener( urllib2.ProxyHandler()) ); by = urllib2.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); open( os.path.join( ipp, pf), 'wb' ).write(by) if dh == h else None; print('Error validating download (got %s instead of %s), please try manual install' % (dh, h) if dh != h else 'Please restart Sublime Text to finish installation')</pre>
+            参考地址：<a target="_blank" href="https://packagecontrol.io/installation">https://packagecontrol.io/installation</a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        打开Sublime Text 2/3软件，在Preferences(首选项)菜单中打开Package Control(插件控制)，打开后找到install packages并点击。或者直接使用ctrl + shift + p 并输入install回车！
+        <p>
+          到这一步，如果没有弹窗报错，那直接搜索ctags， 回车执行，稍等一会看到左下角提示安装成功就好了
+        </p>
+        <p>
+          如果弹出错误显示Package Control：there are no packages for installation，那就有点麻烦了。网上有说是IPV6的问题，有说是被墙的问题。个人经历，我将IPV6禁用了，也根据资料改了hosts文件，都没用。用了VPN翻墙，Google和YouTube都能正常访问，install插件的时候还是弹窗报这个错，后来索性没管它了，直接去GitHub上面下的zip包，然后解压到了 C:\Program Files\Sublime Text 3\Data\Packages\CTags 目录下(前面那截请换成自己的sublime的安装目录)
+        </p>
+        <p>
+          下载地址：<a target="_blank" href="https://github.com/SublimeText/CTags">https://github.com/SublimeText/CTags</a>
+        </p>
+        <p>
+          windows使用还需要一个ctags.exe文件需要下载<br>
+          下载地址：<a target="_blank" href="http://prdownloads.sourceforge.net/ctags/ctags58.zip">http://prdownloads.sourceforge.net/ctags/ctags58.zip</a><br>
+          下载后解压，这里面就包含一个ctags.exe文件，将它一个文件复制出来(其他都没用了)放到c:/windows里面去，然后要修改相应的配置文件。
+          通过将 Preference(首选项) -> Package Settings(插件控制) -> Ctags -> Settings Default 中的内容拷贝到 Setting User中，将 "command": "" 中的 "" 填入Ctags.exe的路径位置：
+          <pre>
+修改之前："command": "",
+修改之后："command": "C:\\windows\\ctags.exe",</pre>
+        </p>
+      </li>
+      <li>
+        搞定之后，在侧左栏的工程/项目文件上右键会看到CTags: Rebuild Tags菜单项，这时候我们就可以生成.tags的索引文件了，方式如下：
+        <p>
+          使用Win+R：输入指令cmd，回车。cd指令进入要跟踪的目标文件夹，输入:ctags -R -f .tags
+          手动生成.tags文件。
+        </p>
+      </li>
+      <li>
+        当你看到文件夹中多了一个.tags的文件的时候，恭喜你，搞定了。随便选择一个父类名或者函数名，右键选择Navigate to Definition就可以跳转过去了，或者按住Ctrl + shift + 左键也可以跳转。不过这个索引文件真不小！
+      </li>
+    </ol>
+</section>
