@@ -170,6 +170,10 @@ function review(obj){
   }
   //获取评论者昵称
   var name = $(obj).find('input[name=name]').val() || '匿名';
+  if (name.length > 6) {
+    alert('你有那么长的名字吗？');
+    return false;
+  }
   if (name.match(/^ +$/)) name = '匿名';
   
   $(obj).find('button').attr('disabled', true);

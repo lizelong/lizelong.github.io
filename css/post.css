@@ -56,6 +56,6 @@
   margin-top:15px;
 }
 
-a{
+a,div,li,pre{
   word-wrap:break-word;
 }
