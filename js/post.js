@@ -88,6 +88,7 @@ var $_GET = (function(){
 $.ajax({
   url: './post/'+ $_GET['id'] +'.html',
   type: 'get',
+  // cache: false,//取消缓存
   success: function(res){
     if (res) {
       $('.widget-body').html(res);

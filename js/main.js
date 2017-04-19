@@ -7,7 +7,7 @@ page(p);          //默认加载第一页数据
 /**
  * 请求title.html的数据
  * @param  {int} p   当前页，默认刷新就加载第一页的数据
- * @param  {int} num 每页显示几条数据，默认显示5条
+ * @param  {int} num 每页显示几条数据，默认显示2条
  */
 function page(p, num){
   //设置默认显示10条
