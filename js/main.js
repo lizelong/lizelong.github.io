@@ -2,6 +2,18 @@ var data;         //存放所有title数据
 var total = 1;    //总页码数
 var flag = true;  //是否加载数据
 var p = 1;        //当前页，默认为1
+
+//同步请求浏览量的数据
+var liulan = {};
+$.ajax({
+  url: 'http://www.copydm.com/blog/index.php/Home/Index/countClickNum',
+  async: false,
+  dataType: 'json',
+  success: function(res){
+    liulan = res;
+  }
+});
+
 page(p);          //默认加载第一页数据
 
 /**
@@ -22,7 +34,8 @@ function page(p, num){
       var end = Math.min(num, data.length);
       var str = '';
       for (var i = 0; i < end; i++) {
-        str += '<article class="widget"> <header class="widget-header"> <h2 class="widget-title"> <a href="post.html?id='+ data[i]['id'] +'">'+ data[i]['title'] +'</a> </h2> <div class="widget-meta"> <span>发表于 '+ data[i]['time'] +'</span> <span class="divider">/</span> </div> <div class="hr-line"></div> </header> <section class="widget-body"> '+ data[i]['des'] +'</section> <section class="widget-footer"> <a class="btn" href="post.html?id='+ data[i]['id'] +'">阅读全文</a> </section> </article>';
+      	var liulanStr = (liulan[data[i]['id']])? liulan[data[i]['id']] : '0/0';
+        str += '<article class="widget"> <header class="widget-header"> <h2 class="widget-title"> <a href="post.html?id='+ data[i]['id'] +'">'+ data[i]['title'] +'</a> </h2> <div class="widget-meta"> <span>发表于 '+ data[i]['time'] +'</span> <span class="divider">浏览 '+liulanStr+'</span> </div> <div class="hr-line"></div> </header> <section class="widget-body"> '+ data[i]['des'] +'</section> <section class="widget-footer"> <a class="btn" href="post.html?id='+ data[i]['id'] +'">阅读全文</a> </section> </article>';
       }
       // console.log(data);
       $('#main_content_wrap').append(str);
@@ -32,7 +45,8 @@ function page(p, num){
     var end = Math.min((start + num), data.length);
     var str = '';
     for (var i = start; i < end; i++) {
-      str += '<article class="widget"> <header class="widget-header"> <h2 class="widget-title"> <a href="post.html?id='+ data[i]['id'] +'">'+ data[i]['title'] +'</a> </h2> <div class="widget-meta"> <span>发表于 '+ data[i]['time'] +'</span> <span class="divider">/</span> </div> <div class="hr-line"></div> </header> <section class="widget-body"> '+ data[i]['des'] +'</section> <section class="widget-footer"> <a class="btn" href="post.html?id='+ data[i]['id'] +'">阅读全文</a> </section> </article>';
+      	var liulanStr = (liulan[data[i]['id']])? liulan[data[i]['id']] : '0/0';
+      	str += '<article class="widget"> <header class="widget-header"> <h2 class="widget-title"> <a href="post.html?id='+ data[i]['id'] +'">'+ data[i]['title'] +'</a> </h2> <div class="widget-meta"> <span>发表于 '+ data[i]['time'] +'</span> <span class="divider">浏览 '+liulanStr+'</span> </div> <div class="hr-line"></div> </header> <section class="widget-body"> '+ data[i]['des'] +'</section> <section class="widget-footer"> <a class="btn" href="post.html?id='+ data[i]['id'] +'">阅读全文</a> </section> </article>';
     }
 
     $('#main_content_wrap').append(str);

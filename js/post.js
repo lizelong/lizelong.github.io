@@ -30,6 +30,27 @@ $('#project_tagline').html(title[index]);
 //   return false;
 // }
 
+
+
+//============== 模拟PHP获取URL传的参数，比如$_GET['id']
+var $_GET = (function(){
+  var url = window.document.location.href.toString();
+  var u = url.split("?");
+  if(typeof(u[1]) == "string"){
+      u = u[1].split("&");
+      var get = {};
+      for(var i in u){
+          var j = u[i].split("=");
+          get[j[0]] = j[1];
+      }
+      return get;
+  } else {
+      return {};
+  }
+})();
+//============== 模拟PHP获取URL传的参数 end
+
+
 //============== 获取上一篇下一篇的标题信息 start
 function getTitle() {
   //ajax请求
@@ -65,25 +86,6 @@ function getTitle() {
 //============== 获取上一篇下一篇的标题信息 end
 
 
-//============== 模拟PHP获取URL传的参数，比如$_GET['id']
-var $_GET = (function(){
-  var url = window.document.location.href.toString();
-  var u = url.split("?");
-  if(typeof(u[1]) == "string"){
-      u = u[1].split("&");
-      var get = {};
-      for(var i in u){
-          var j = u[i].split("=");
-          get[j[0]] = j[1];
-      }
-      return get;
-  } else {
-      return {};
-  }
-})();
-//============== 模拟PHP获取URL传的参数 end
-
-
 //============== 获取帖子内容 start
 $.ajax({
   url: './post/'+ $_GET['id'] +'.html',
@@ -102,6 +104,8 @@ $.ajax({
 })
 //============== 获取帖子内容 end
 
+//加载阅读量
+$('.liulan').load('http://www.copydm.com/blog/index.php/Home/Index/countClickNum/pid/' + $_GET['id']);
 
 //============== 滚动显示到顶和到底按钮 start
 $(window).scroll(function(){
@@ -275,3 +279,21 @@ function reply(obj){
   return false;
 }
 //======================= 处理回复操作 end
+
+
+
+//======================= 处理点击量 start
+var now = new Date().getTime();
+var id = $_GET['id'];
+var time = $.cookie('log_time'+id);
+var sign = $.cookie('sign');
+if (!sign) {
+    //生成随机标记
+    $.cookie('sign', Math.random());
+}
+//30秒之内，不允许重复请求
+if (!time || (time < now-30000)) {
+    $.cookie('log_time'+id, now);
+    $.post('http://www.copydm.com/blog/index.php/Home/Index/countClickNum', {'pid':id, 'sign':sign});
+}
+//======================= 处理点击量 end
