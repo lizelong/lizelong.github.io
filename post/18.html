@@ -1,0 +1,17 @@
+<p>最近在录制一套PHP入门的视频，放到网上供一些初学的同学看看(<a href="http://video.lizelong.com" target="_blank">视频地址</a>)，涉及到一些视频播放的处理和优化，陆续在网上找到一些有用的小技巧，记录一下</p><p><br/></p><ol class=" list-paddingleft-2" style="list-style-type: decimal;"><li><p>PHP中exec()函数的用法<br/>作用：exec()可以执行操作系统的命令，比如Windows下面的dir，或者Linux下面的ls。<br/>原型：string exec( string $command [, array &amp;$output [, int &amp;$return_var]])<br/>说明：第1个参数为要执行的命令；第2个参数是执行命令后得到的结果，以数组的形式返回；第3个参数表示是否执行成功，0表示OK，1表示失败；返回值是执行结果的最后一行。<br/><br/><span style="color: rgb(255, 0, 0);">注意：在Windows下(linux没试过)，当命令执行出错的时候，exec函数并不会返回<span style="color: rgb(255, 0, 0);">错误信息，所以调试非常不方便，但是我们可以想办法解决这个问题</span>。<br/></span><br/>概念：在bash中0,1,2三个数字分代表标准输入（一般是键盘），标准输出（一般是显示屏，准确的说是用户终端控制台），标准错误（出错信息输出）<br/>&nbsp;&nbsp;&nbsp;&nbsp;0：标准输入 STDIN_FILENO<br/>&nbsp;&nbsp;&nbsp;&nbsp;1：标准输出 STDOUT_FILENO<br/>&nbsp;&nbsp;&nbsp;&nbsp;2：标准错误 STDERR_FILENO<br/></p><p><span style="color: rgb(255, 0, 0);">exec函数的返回只包含有1的信息，我们可以将2也定向到1就可以看到报错信息了，方便调试，写法为： exec(命令.&#39; 2&gt;&amp;1&#39;, $arr, $num);</span><br/></p><p><br/></p></li><li><p>在Windows下如何用PHP后台执行某个程序<br/>需求：我在将视频上传成功后需要把它切割成一个个的ts文件，方便在网页中使用hls加载，不过切割这视频很费时，不可能在页面中直接等待半个多小时，所以想到了后台执行；在Linux下面想要后台执行某个程序很简单，在命令的后面加上&amp;就可以了，但是在Windows下却不支持，来看看Windows下如何让脚本后台执行吧。</p><p>主要用到两个函数：<br/>&nbsp;&nbsp;&nbsp;&nbsp;1.&nbsp;ignore_user_abort(true) 设置客户端断开连接时是否中断脚本的执行<br/>&nbsp;&nbsp;&nbsp;&nbsp;2.&nbsp;set_time_limit(0) 设置脚本最大执行时间，0表示不限时<br/></p><p><br/></p></li></ol><p>&nbsp;&nbsp;&nbsp;&nbsp;实现代码：</p><pre class="brush:php;toolbar:false">&lt;?php
+&nbsp;&nbsp;&nbsp;&nbsp;ob_end_clean();#清除之前的缓冲内容
+&nbsp;&nbsp;&nbsp;&nbsp;header(&quot;Connection:&nbsp;close&quot;);//关闭浏览器连接
+&nbsp;&nbsp;&nbsp;&nbsp;header(&quot;HTTP/1.1&nbsp;200&nbsp;OK&quot;);&nbsp;//发送200状态码，表示这个请求是成功的，要不然可能浏览器会重试，特别是有代理的情况下
+&nbsp;&nbsp;&nbsp;&nbsp;ob_start();#开始当前代码缓冲
+&nbsp;&nbsp;&nbsp;&nbsp;echo&nbsp;&quot;要输出到页面上的信息，可以是js的跳转代码&quot;;
+&nbsp;&nbsp;&nbsp;&nbsp;$size=ob_get_length();
+&nbsp;&nbsp;&nbsp;&nbsp;header(&quot;Content-Length:&nbsp;$size&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;ob_end_flush();#输出当前缓冲
+&nbsp;&nbsp;&nbsp;&nbsp;flush();#输出PHP缓冲
+&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);#睡一秒，保证之前的信息已经响应给浏览器了&nbsp;&nbsp;
+
+&nbsp;&nbsp;&nbsp;&nbsp;ignore_user_abort(true);
+&nbsp;&nbsp;&nbsp;&nbsp;set_time_limit(0);&nbsp;//取消脚本运行时间的超时上限
+&nbsp;&nbsp;&nbsp;&nbsp;//在这里写切割视频的代码
+&nbsp;&nbsp;&nbsp;&nbsp;//当视频上传成功后，页面会正常显示或者跳转
+&nbsp;&nbsp;&nbsp;&nbsp;//但视频会悄悄的被切成一个个的ts文件</pre><p><br/></p>
