@@ -1,0 +1,37 @@
+<p><!-- Title --></p><p><br/></p><section><h1>为什么要升级？<br/></h1><p>Google很早就已经开始大力推广https，甚至明说相同条件下，https网站的排名会更靠前。但因为升级至https存在一定的技术门槛，而且成本也比较高昂(证书要花钱)，所以当时响应支持的并不是很多。</p><p>但是今天，在各大企业的大力推广下，https已经非常普及了，目前Top 100的网站中已经有90%的网站默认使用了https，而且 Let’s Encrypt 也在给全球用户提供永久免费的证书(虽然3个月需要更新一次)，所以唯一的限制就是技术门槛了，你就不得不学习一下该如何升级你的网站了！</p><hr/><h2>升级流程</h2><p>升级https，我们可以分为3步：购买证书、安装证书、设置跳转，下面来大致看下这3步的流程，最后会有详细步骤</p><h4>1. 购买证书</h4><p>证书类型分为DV、OV、EV这三种，这三种有什么区别？</p><pre>DV（域名型SSL）：个人站点、iOS应用分发站点、登陆等单纯https加密需求的链接；
+OV（企业型SSL）：企业官网；
+EV（增强型SSL）：对安全需求更强的企业官网、电商、互联网金融网站；</pre><p>Let’s Encrypt提供的SSL证书支持单域名、多域名、通配符等类型，而且用的人也比较多，关键是免费，所以个人站长或小公司多半会选择他！虽然免费的有效期只有3个月(过期之前可以免费更新)，但是我们可以通过Linux的计划任务让它自动更新就好啦！</p><h4>2. 安装证书</h4><p>证书购买完成(或者生成)后，你就可以得到对应域名的证书文件。根据你Web服务器的不同种类一般证书也会分为多种，请根据自己的实际情况下载安装，一般的常见的Web服务器分为Nginx、Apache、Tomcat、IIS 6、IIS 7/8这几种。所谓的安装其实就是将证书放到你的服务器，再改改服务器的配置。</p><h4>3. 设置跳转</h4><p>经过上面的步骤，你的网站就能以 <a href="https://domainhost" target="_blank">https://domainhost</a> 的形式访问了，但是这个时候http和https同时都能够访问，我们可以修改服务器的配置将http请求通过301 redirect到https上去。</p><h2>安装Let’s Encrypt的证书</h2><p>根据上面的步骤，我们可以知道，升级https其实并不困难，很多步骤都是固定的。而且网络上已经有很多封装好的脚本可以直接使用，这里给大家推荐一个 acme.sh ， <a href="https://github.com/Neilpang/acme.sh/wiki/%E8%AF%B4%E6%98%8E" target="_blank">项目文档</a></p><blockquote><p>系统： CentOS 7.3 <br/>服务器： Apache 2.4.27</p></blockquote><p>按照上面的项目文档，就可以搞定啦，我这里总结下基本的步骤，和我安装过程中踩到的坑：</p><h4>1. 安装 acme.sh</h4><pre>#&nbsp;进到~目录执行
+$&nbsp;curl&nbsp;&nbsp;https://get.acme.sh&nbsp;|&nbsp;sh
+
+#&nbsp;给脚本创建一个别名
+$&nbsp;alias&nbsp;acme.sh=~/.acme.sh/acme.sh</pre><h4>2. 生成证书</h4><pre>#&nbsp;我的域名是：&nbsp;lizeong.com&nbsp;
+$&nbsp;acme.sh&nbsp;&nbsp;--issue&nbsp;&nbsp;-d&nbsp;lizelong.com&nbsp;-d&nbsp;www.lizelong.com&nbsp;&nbsp;--apache</pre><h4>3. copy/安装 证书</h4><pre>#&nbsp;我将证书放到了Apache的安装目录里面的cert，所以需要新建文件夹
+$&nbsp;mkdir&nbsp;/usr/local/apache2/cert
+
+#&nbsp;将证书安装到指定目录
+$&nbsp;acme.sh&nbsp;--install-cert&nbsp;-d&nbsp;lizelong.com&nbsp;\
+-d&nbsp;www.lizelong.com&nbsp;\
+--cert-file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/usr/local/apache2/cert/cert.pem&nbsp;&nbsp;\
+--key-file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/usr/local/apache2/cert/key.pem&nbsp;&nbsp;\
+--fullchain-file&nbsp;/usr/local/apache2/cert/fullchain.pem&nbsp;\
+--reloadcmd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;apachectl&nbsp;restart&quot;</pre><p><strong style="color:red"> 注意：<br/> 1. 路径要给对 <br/> 2. 最后的--reloadcmd是你服务器的重启命令。 <br/> 3. 以上步骤的详细解释请看<a href="https://github.com/Neilpang/acme.sh/wiki/%E8%AF%B4%E6%98%8E" target="_blank">项目文档</a> </strong></p><h4>4. 修改配置</h4><h5>1. 打开 Apache 安装目录下的 conf 目录中的 httpd.conf 文件，找到以下内容并去掉“#”：</h5><pre>#LoadModule&nbsp;ssl_module&nbsp;modules/mod_ssl.so
+#Include&nbsp;conf/extra/httpd-ssl.conf</pre><p>ps: 我的Apache在编译的时候没有mod_ssl模块，所以多了一步安装ssl模块，在不重新编译Apache的前提下安装ssl：</p><pre>#&nbsp;进入Apache的源码目录
+$&nbsp;cd&nbsp;/soft/httpd-2.4.27/modules/ssl/
+
+#&nbsp;执行以下命令：
+$&nbsp;/usr/local/apache2/bin/apxs&nbsp;-i&nbsp;-c&nbsp;-a&nbsp;-D&nbsp;HAVE_OPENSSL=1&nbsp;-I&nbsp;/usr/include/openssl&nbsp;-lcrypto&nbsp;-lssl&nbsp;-ldl&nbsp;*.c</pre><h5>2. 打开Apache安装目录下的conf/extra/httpd-ssl.conf文件（或conf.d/ssl.conf），在配置文件中找到以下语句并配置:</h5><pre>&nbsp;&nbsp;&nbsp;&nbsp;Listen&nbsp;443
+&nbsp;&nbsp;&nbsp;&nbsp;SSLHonorCipherOrder&nbsp;onDocumentRoot&nbsp;&quot;网站的根目录&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;ServerName&nbsp;www.lizelong.com:443&nbsp;&nbsp;&nbsp;&nbsp;#域名
+&nbsp;&nbsp;&nbsp;&nbsp;ServerAlias&nbsp;lizelong.com:443&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#别名
+&nbsp;&nbsp;&nbsp;&nbsp;ErrorLog&nbsp;&quot;/usr/local/apache2/logs/错误日志&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;TransferLog&nbsp;&quot;/usr/local/apache2/logs/访问日志&quot;
+
+&nbsp;&nbsp;&nbsp;&nbsp;SSLEngine&nbsp;on
+
+&nbsp;&nbsp;&nbsp;&nbsp;#下面的路径别改错了哦~
+&nbsp;&nbsp;&nbsp;&nbsp;SSLCertificateFile&nbsp;&quot;/usr/local/apache2/cert/cert.pem&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;SSLCertificateKeyFile&nbsp;&quot;/usr/local/apache2/cert/key.pem&quot;
+&nbsp;&nbsp;&nbsp;&nbsp;SSLCertificateChainFile&nbsp;&quot;/usr/local/apache2/cert/fullchain.pem&quot;</pre><h5>3. 重启Apache</h5><pre>$&nbsp;apachectl&nbsp;restart</pre><p>这时候，你的网站应该就可以用https访问了，如果访问不了，看看是不是你的安全组没有开放443端口。</p><p>我的服务器是阿里云的esc，并且只开放了有限的端口，所以需要去到控制台的安全组设置一下，具体操作不会的话请自行百度。</p><p>但是同样的http也能访问，所以我们还差最后一步，让http的访问通过301重定向到https。</p><h5>4. Apache设置重定向</h5><p>修改网站根目录的 .htaccess</p><pre>&nbsp;&nbsp;RewriteEngine&nbsp;On
+&nbsp;&nbsp;#http&nbsp;80端口的请求用301跳转到https
+&nbsp;&nbsp;RewriteCond&nbsp;%{SERVER_PORT}&nbsp;80
+&nbsp;&nbsp;RewriteRule&nbsp;^(.*)$&nbsp;https://%{HTTP_HOST}/$1&nbsp;[R=301,L]</pre><h2>总结</h2><p>至此，网站升级https的工作已经全部完成了，但是升级https之后还有一些收尾工作需要进行，比如尽量将引用图片等静态资源的路径改为相对路径，所有的http协议头都改为https或者直接不写，支付接口的回调地址等需要绝对路径的地方，记得改一下，否则会给你带来一些“惊喜”。</p></section>
