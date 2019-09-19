@@ -11,8 +11,8 @@ $&nbsp;mkdir&nbsp;/usr/local/apache2/cert
 #&nbsp;将证书安装到指定目录
 $&nbsp;acme.sh&nbsp;--install-cert&nbsp;-d&nbsp;lizelong.com&nbsp;\
 -d&nbsp;www.lizelong.com&nbsp;\
---cert-file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/usr/local/apache2/cert/cert.pem&nbsp;&nbsp;\
---key-file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/usr/local/apache2/cert/key.pem&nbsp;&nbsp;\
+--cert-file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/usr/local/apache2/cert/cert.crt&nbsp;&nbsp;\
+--key-file&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/usr/local/apache2/cert/key.key&nbsp;&nbsp;\
 --fullchain-file&nbsp;/usr/local/apache2/cert/fullchain.pem&nbsp;\
 --reloadcmd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;apachectl&nbsp;restart&quot;</pre><p><strong style="color:red"> 注意：<br/> 1. 路径要给对 <br/> 2. 最后的--reloadcmd是你服务器的重启命令。 <br/> 3. 以上步骤的详细解释请看<a href="https://github.com/Neilpang/acme.sh/wiki/%E8%AF%B4%E6%98%8E" target="_blank">项目文档</a> </strong></p><h4>4. 修改配置</h4><h5>1. 打开 Apache 安装目录下的 conf 目录中的 httpd.conf 文件，找到以下内容并去掉“#”：</h5><pre>#LoadModule&nbsp;ssl_module&nbsp;modules/mod_ssl.so
 #Include&nbsp;conf/extra/httpd-ssl.conf</pre><p>ps: 我的Apache在编译的时候没有mod_ssl模块，所以多了一步安装ssl模块，在不重新编译Apache的前提下安装ssl：</p><pre>#&nbsp;进入Apache的源码目录
