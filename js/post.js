@@ -105,7 +105,7 @@ $.ajax({
 //============== 获取帖子内容 end
 
 //加载阅读量
-$('.liulan').load('http://www.copydm.com/blog/index.php/Home/Index/countClickNum/pid/' + $_GET['id']);
+$('.liulan').load('http://119.23.52.177/blog/index.php/Home/Index/countClickNum/pid/' + $_GET['id']);
 
 //============== 滚动显示到顶和到底按钮 start
 $(window).scroll(function(){
@@ -131,7 +131,7 @@ function pao(flag) {
 
 //======================= 评论列表 start
 $.ajax({
-  url: 'http://www.copydm.com/blog/index.php/Home/Index/getView',
+  url: 'http://119.23.52.177/blog/index.php/Home/Index/getView',
   type: 'post',
   data: {pid: $_GET['id']},
   dataType: 'json',
@@ -183,7 +183,7 @@ function review(obj){
   $(obj).find('button').attr('disabled', true);
   //ajax提交添加数据
   $.ajax({
-    url: 'http://www.copydm.com/blog/index.php/Home/Index/review',
+    url: 'http://119.23.52.177/blog/index.php/Home/Index/review',
     type: 'post',
     data: {pid:$_GET['id'], name: name, content:content, browser: useragent, screen: size},
     dataType: 'json',
@@ -256,7 +256,7 @@ function reply(obj){
 
   $(obj).find('button').attr('disabled', true);
   $.ajax({
-    url: 'http://www.copydm.com/blog/index.php/Home/Index/reply',
+    url: 'http://119.23.52.177/blog/index.php/Home/Index/reply',
     data: {rid:rid, name:name, content:content, browser: useragent, screen: size},
     type: 'post',
     dataType: 'json', 
@@ -294,6 +294,6 @@ if (!sign) {
 //30秒之内，不允许重复请求
 if (!time || (time < now-30000)) {
     $.cookie('log_time'+id, now);
-    $.post('http://www.copydm.com/blog/index.php/Home/Index/countClickNum', {'pid':id, 'sign':sign});
+    $.post('http://119.23.52.177/blog/index.php/Home/Index/countClickNum', {'pid':id, 'sign':sign});
 }
 //======================= 处理点击量 end
