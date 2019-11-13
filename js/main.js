@@ -6,7 +6,7 @@ var p = 1;        //当前页，默认为1
 //同步请求浏览量的数据
 var liulan = {};
 $.ajax({
-  url: 'http://www.copydm.com/blog/index.php/Home/Index/countClickNum',
+  url: 'http://119.23.52.177/blog/index.php/Home/Index/countClickNum',
   async: false,
   dataType: 'json',
   success: function(res){
